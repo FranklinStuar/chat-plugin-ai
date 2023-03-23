@@ -8,12 +8,12 @@ const ChatProvider = (props) => {
     {
       type:"assistant",
       name:"Automatic Chat",
-      avatar:"./img/chat.png",
+      avatar:"img/chat.png",
     },
     {
       type:"user",
       name:"User",
-      avatar:"./img/user.png",
+      avatar:"img/user.png",
     }
   ]
   //default messages with config about chat
@@ -60,7 +60,7 @@ const ChatProvider = (props) => {
   
   // Test to send and return info on openAI
   async function handleSendMessage() {
-    const apiKey = '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';
+    const apiKey = process.env.REACT_APP_OPENAI_KEY;
     const length = 50;
     return await sendChatGPTRequest(apiKey, length, listMessages);
   }
@@ -94,7 +94,7 @@ const ChatProvider = (props) => {
     setChatStatus(false)
   }
   const toggleChat = () =>{
-    setChatStatus(false)
+    setChatStatus(!chatStatus)
   }
 
   const writeMessage = (text) =>{
