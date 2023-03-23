@@ -1,7 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Quicksand:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap');
 // font
 $font-primary: 'Quicksand', sans-serif;
-$font-secondary: 'Poppins', sans-serif;
 // size
 $text-title:18px;
 $text-content:14px;
@@ -16,27 +15,25 @@ $color-dark-light: #f4f4f4;
 $color-green-dark: #68C453;
 $color-green-light: #EFFBEC;
 
-body{
-  width: auto;
-  max-width: 375px;
-  background: rgba(#fff, 0);
-  &:has(.container-chat.active){
-    width: 100%;
-  }
-}
-body{
+.chat-pg{
   color: $color-primary;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   font-family: $font-primary;
   font-size: $text-content;
-  position: absolute;
-  right: 20px;
-  bottom: 20px;
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  z-index: 99999999;
+  @media (max-width:450px) {
+    bottom: 20px;
+    right: 10px;
+  }
 }
 
 .button-chat{
+  background: #fff;
   width: $img-button;
   height: $img-button;
   box-shadow: 0 4px 12px rgba(#000000, 0.25);
@@ -50,6 +47,12 @@ body{
     height: 100%;
     object-fit: contain;
   }
+  @media (max-width:450px) {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
 }
 
 
@@ -57,8 +60,9 @@ body{
   position: absolute;
   bottom: calc($img-button + 10px);
   right: 0;
-  width: 100%;
+  width: 375px;
   height: 400px;
+  background: #fff;
   box-shadow: 0 4px 12px rgba(#000000, 0.25);
   border-radius: 20px;
   margin: 0;
@@ -67,6 +71,9 @@ body{
   grid-template-rows: auto 1fr auto;
   &.active{
     display: grid;
+  }
+  @media (max-width:450px) {
+    width: calc(100vw - 20px);
   }
 }
 

@@ -9,8 +9,10 @@ function App() {
   return (
     <ChatProvider>
       <React.Fragment>
-        <Container/>
-        <Button/>
+        <div className="chat-pg">
+          <Container/>
+          <Button/>
+        </div>
       </React.Fragment>
     </ChatProvider>
   );

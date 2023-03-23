@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './style/globals.scss';
 import App from './App';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById('chatai-fp'));
 root.render(
   <App/>
 );
