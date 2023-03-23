@@ -10,20 +10,24 @@ License: Attribution-NonCommercial-NoDerivatives (BY-NC-ND)
 License URI: https://creativecommons.org/licenses/by-nc-nd/4.0/
 */
 
-include plugin_dir_path( __FILE__ ) . 'admin.php';
+function init_scripts() {
+  // Obtener la ruta base de tu plugin
+  $plugin_url = plugin_dir_url( __FILE__ );
+  // Leer el contenido del archivo asset-manifest.json
+  $asset_manifest = file_get_contents(__DIR__ . '/dist/asset-manifest.json');
+  // Decodificar el contenido JSON en un objeto PHP
+  $asset_manifest_obj = json_decode($asset_manifest);
 
-function chataifp__get_data_chat() {
-  global $wpdb;
-  $companyName = get_option( 'chataifp__company_name' );
-  $companyActivity = get_option( 'chataifp__company_activity' );
-  $companyDescription = get_option( 'chataifp__company_description' );
-  $links = get_option( 'chataifp__links', array() );
-  // Validar los datos obtenidos si es necesario
-  // ...
+  $main_css = $asset_manifest_obj->files->{'main.css'};
+  $main_js = $asset_manifest_obj->files->{'main.js'};
 
-  // Enviar los datos a la página de React
-  wp_enqueue_script( 'nombre_de_tu_script_de_react' );
-  wp_localize_script( 'nombre_de_tu_script_de_react', 'datos_desde_php', $opciones );
+  // Agregar el archivo CSS
+  wp_enqueue_style( 'frontend-css', $plugin_url . $main_css );
+
+  // Agregar el archivo JS
+  wp_enqueue_script( 'frontend-js', $plugin_url . $main_js, array(), null, true );
 }
 
-add_action( 'admin_enqueue_scripts', 'chataifp__get_data_chat' );
+// Llamar a la función de carga cuando sea necesario
+add_action( 'wp_enqueue_scripts', 'init_scripts' );
+
