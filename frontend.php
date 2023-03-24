@@ -72,7 +72,7 @@ function chatai_fp_get_data_conversations() {
           'role' => 'system',
           'content' => `You should introduce yourself with your name and tell that the user can write in both languages`
         ),
-      )
+      );
     } else {
       $conversation = $data['messages'];
     }
@@ -145,4 +145,3 @@ function chatai_fp_process_request() {
 
 add_action( 'wp_ajax_chatai_fp_process_request', 'chatai_fp_process_request' );
 add_action( 'wp_ajax_nopriv_chatai_fp_process_request', 'chatai_fp_process_request' );
-|

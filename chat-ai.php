@@ -12,35 +12,5 @@ License URI: https://creativecommons.org/licenses/by-nc-nd/4.0/
 
 
 include( plugin_dir_path( __FILE__ ) . 'admin.php' );
-
-
-
-
-
-
-function init_scripts() {
-  // Obtener la ruta base de tu plugin
-  $plugin_url_react = plugin_dir_url( __FILE__ )."/dist/";
-  // Leer el contenido del archivo asset-manifest.json
-  $asset_manifest = file_get_contents(__DIR__ . '/dist/asset-manifest.json');
-  // Decodificar el contenido JSON en un objeto PHP
-  $asset_manifest_obj = json_decode($asset_manifest);
-  $main_css = $asset_manifest_obj->files->{'main.css'};
-  $main_js = $asset_manifest_obj->files->{'main.js'};
-  // Agregar el archivo CSS
-  wp_enqueue_style( 'frontend-css', $plugin_url_react . $main_css );
-  // Agregar el archivo JS
-  wp_enqueue_script( 'frontend-js', $plugin_url_react . $main_js, array(), null, true );
-}
-// Llamar a la función de carga cuando sea necesario
-add_action( 'wp_enqueue_scripts', 'init_scripts' );
-
-
-function chataifp_add_footer() {
-  // Agregar un div al final del cuerpo del documento
-  echo '<div id="chatai-fp"></div>';
-}
-// Llamar a la función de footer
-add_action( 'wp_footer', 'chataifp_add_footer' );
-
+include( plugin_dir_path( __FILE__ ) . 'frontend.php' );
 
