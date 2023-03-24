@@ -1,9 +1,31 @@
 import React from 'react'
+import axios from 'axios';
+
 
 const ChatContext = React.createContext()
 
 const ChatProvider = (props) => {
+
+  const sendData = async () => {
+    try {
+      const response = await axios.post('https://tusitio.com/wp-admin/admin-ajax.php', {
+        action: 'myplugin_process_request',
+        data: {
+          'status-chat': 'init'
+        }
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  }
   
+
+
   const authors = [
     {
       type:"assistant",
