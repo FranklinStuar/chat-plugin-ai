@@ -1,10 +1,9 @@
-import React from 'react'
-import {GetDataOpenAI} from "./GetDataOpenAI"
+import React, {useEffect} from 'react'
 
 
 const ChatContext = React.createContext()
 
-const ChatProvider = (props) => {
+const ChatProvider = ({children}) => {
 
   const authors = [
     {
@@ -18,41 +17,34 @@ const ChatProvider = (props) => {
       avatar:"img/user.png",
     }
   ]
-  const [newMessage, setNewMessage] = React.useState("")
   const [chatStatus, setChatStatus] = React.useState(false)
-  const {
-    item: listMessages,
-    saveItem: saveListMessages,
-    loading,
-    error,
-  } = GetDataOpenAI()
-  console.log({listMessages})
+  const [listMessages, setListMessages] = React.useState([])
+  const [loading, setLoading] = React.useState(false)
+  const [error, setError] = React.useState(false)
 
-  // OPEN AI
-  /**
-   * 
-   * @param {*} apiKey Api OpenAI
-   * @param {*} length Max Tokens, used to do tests
-   * @param {*} listMessages List of all messages similar to defaultMessages with all conversation
-   * @returns text of response
-   */
   
-  const sendMessage = async (e) =>{
-    e.preventDefault();
-    
-    let message = e.target.value 
-    saveListMessages(message)
-    // save response on list of messages and clear input of chat
-    setNewMessage("")
-    //openAI
-    console.log({listMessages})
+  const sendMessage = (content) =>{
+    const message = {
+      role:"user",
+      content
+    }
+    const element = document.querySelector(".body-chat");
+    const lastItem = document.querySelector(".body-chat .conversation-chat:last-child");
+    element.scrollTop = element.scrollHeight - (lastItem?.scrollHeight || 0);
+    setListMessages([...listMessages, message])
+    setLoading(true)
+    setTimeout(() => {
+      const response = {
+        role:"assistant",
+        content: "Thanks"
+      }
+      setListMessages([...listMessages, response])
+      setLoading(false)
+    }, 3000);
   }
 
 
   // CONFIG
-  const openChat = () =>{
-    setChatStatus(true)
-  }
   const closeChat = () =>{
     setChatStatus(false)
   }
@@ -60,21 +52,17 @@ const ChatProvider = (props) => {
     setChatStatus(!chatStatus)
   }
 
-  const writeMessage = (text) =>{
-    setNewMessage(text)
-  }
-
   return (
     <ChatContext.Provider
       value={{
         authors,
-        loading, error,
+        loading, error, setError,
         listMessages,
-        newMessage, setNewMessage, writeMessage, sendMessage,
-        chatStatus, setChatStatus, openChat, closeChat, toggleChat
+        sendMessage,
+        chatStatus, closeChat, toggleChat
       }}
     >
-      {props.children}
+      {children}
     </ChatContext.Provider>
   );
 }

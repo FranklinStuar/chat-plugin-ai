@@ -1,9 +1,8 @@
 import React from 'react';
 
-const Conversation = ({typeConversation="", avatar, content, name}) => {
-  console.log(process.env.REACT_APP_PLUGIN_PATH)
+const Message = ({typeMessage="", avatar, content, name}) => {
   return (
-    <div className={"conversation-chat "+typeConversation}>
+    <div className={"conversation-chat "+typeMessage}>
       <div>
         <div className="avatar-chat" target={"_blank"}>
           <img width={48} height={48} src={process.env.REACT_APP_PLUGIN_PATH + "/"+avatar} alt={name + " - avatar"} />
@@ -16,4 +15,4 @@ const Conversation = ({typeConversation="", avatar, content, name}) => {
   );
 }
 
-export {Conversation};
+export default Message;

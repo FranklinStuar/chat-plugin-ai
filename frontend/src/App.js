@@ -1,6 +1,7 @@
 import React from 'react';
-import {Button} from "./components/Button"
-import {Container} from "./container"
+import Button from "./components/Button"
+import Chat from "./container/Chat"
+import Layout from "./container/Layout"
 import { ChatProvider } from './context/ChatContext';
 
 
@@ -8,12 +9,10 @@ import { ChatProvider } from './context/ChatContext';
 function App() {
   return (
     <ChatProvider>
-      <React.Fragment>
-        <div className="chat-pg">
-          <Container/>
-          <Button/>
-        </div>
-      </React.Fragment>
+      <Layout>
+        <Chat/>
+        <Button/>
+      </Layout>
     </ChatProvider>
   );
 }
