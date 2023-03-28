@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react'
+import React from 'react'
 import Header from '../components/Header'
 import Form from '../components/Form'
 import Message from '../components/Message'
@@ -10,16 +10,22 @@ const Chat = () => {
 
   if(chatStatus)
     classChatContainer += ' active';
-
-  let messages = listMessages.filter(message => message.role !== 'system').map(message => {
-    const author = authors.find((author) => author.type === message.role);
+  const filterMessages = () => {
+    return listMessages.filter(message => message.role !== 'system').map(message => {
+      const author = authors.find((author) => {
+        return author.type === message.role
+      });
       return {
         content:message.content,
         avatar: author.avatar,
         name: author.name,
         type: message.role === 'user' ? "chat-user" : "",
       }
-  })
+    })
+  }
+  let messages = []
+  console.log(listMessages)
+  messages = filterMessages()
 
   const authorSystem = authors.find((author) => author.type === "assistant");
 
@@ -29,7 +35,7 @@ const Chat = () => {
       <Header/>
         <div className="body-chat">
 
-          {messages.map((item, index) => (
+          {messages && messages.map((item, index) => (
             <Message
               key={index}
               typeMessage={item.type}

@@ -1,4 +1,5 @@
-import React, {useEffect} from 'react'
+import React from 'react'
+import useChatData from '../hooks/useChatData'
 
 
 const ChatContext = React.createContext()
@@ -17,30 +18,12 @@ const ChatProvider = ({children}) => {
       avatar:"img/user.png",
     }
   ]
-  const [chatStatus, setChatStatus] = React.useState(false)
-  const [listMessages, setListMessages] = React.useState([])
-  const [loading, setLoading] = React.useState(false)
+  const [chatStatus, setChatStatus] = React.useState(true)
+  const { loading, listMessages, newUserMessage } = useChatData()
   const [error, setError] = React.useState(false)
 
-  
   const sendMessage = (content) =>{
-    const message = {
-      role:"user",
-      content
-    }
-    const element = document.querySelector(".body-chat");
-    const lastItem = document.querySelector(".body-chat .conversation-chat:last-child");
-    element.scrollTop = element.scrollHeight - (lastItem?.scrollHeight || 0);
-    setListMessages([...listMessages, message])
-    setLoading(true)
-    setTimeout(() => {
-      const response = {
-        role:"assistant",
-        content: "Thanks"
-      }
-      setListMessages([...listMessages, response])
-      setLoading(false)
-    }, 3000);
+    newUserMessage(content)
   }
 
 
