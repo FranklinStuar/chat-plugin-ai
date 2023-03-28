@@ -1,8 +1,8 @@
 import React, {useEffect} from 'react'
-import {Header} from './../Header'
-import {Form} from './../Form'
-import {Conversation} from './../Conversation'
-import { ChatContext } from '../../context/ChatContext';
+import {Header} from '../components/Header'
+import {Form} from '../components/Form'
+import {Conversation} from '../components/Conversation'
+import { ChatContext } from '../context/ChatContext';
 
 const Container = () => {
   const {chatStatus, listMessages, authors, loading} = React.useContext(ChatContext);
@@ -10,16 +10,17 @@ const Container = () => {
 
   if(chatStatus)
     classChatContainer += ' active';
-
-  const messages = listMessages.filter(message => message.role !== 'system').map(message => {
-    const author = authors.find((author) => author.type === message.role);
-      return {
-        content:message.content,
-        avatar: author.avatar,
-        name: author.name,
-        type: message.role === 'user' ? "chat-user" : "",
-      }
-  })
+  let messages = [];
+  if(Array.isArray(listMessages))
+    messages = listMessages.filter(message => message.role !== 'system').map(message => {
+      const author = authors.find((author) => author.type === message.role);
+        return {
+          content:message.content,
+          avatar: author.avatar,
+          name: author.name,
+          type: message.role === 'user' ? "chat-user" : "",
+        }
+    })
 
   const authorSystem = authors.find((author) => author.type === "assistant");
 

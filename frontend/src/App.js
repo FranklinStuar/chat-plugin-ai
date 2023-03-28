@@ -1,6 +1,6 @@
 import React from 'react';
 import {Button} from "./components/Button"
-import {Container} from "./components/Container"
+import {Container} from "./container"
 import { ChatProvider } from './context/ChatContext';
 
 

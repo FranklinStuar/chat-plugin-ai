@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './style/globals.scss';
+import './style/style.scss';
 import App from './App';
 
 const root = ReactDOM.createRoot(document.getElementById('chatai-fp'));

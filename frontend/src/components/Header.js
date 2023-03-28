@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChatContext } from '../../context/ChatContext';
+import { ChatContext } from '../context/ChatContext';
 
 const Header = () => {
   const {closeChat} = React.useContext(ChatContext);

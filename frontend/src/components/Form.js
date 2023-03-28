@@ -1,5 +1,5 @@
 import React from 'react'
-import { ChatContext } from '../../context/ChatContext';
+import { ChatContext } from '../context/ChatContext';
 
 const Form = () => {
   const {newMessage, writeMessage, sendMessage} = React.useContext(ChatContext);
