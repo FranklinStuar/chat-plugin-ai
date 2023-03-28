@@ -33,12 +33,10 @@ $color-green-light: #EFFBEC;
 }
 
 .button-chat{
-  background: #fff;
   width: $img-button;
   height: $img-button;
   box-shadow: 0 4px 12px rgba(#000000, 0.25);
   border-radius: 50%;
-  padding: 10px;
   box-sizing: border-box;
   cursor: pointer;
   margin-left: auto;
@@ -147,7 +145,6 @@ $color-green-light: #EFFBEC;
     display: block;
     position: relative;
     border-radius: 50%;
-    padding: 4px;
     box-sizing: border-box;
     overflow: hidden;
     width: $img-avatar;
