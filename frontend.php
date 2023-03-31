@@ -86,7 +86,7 @@ function chatai_fp_get_data_conversations() {
         ),
         array(
           'role' => 'system',
-          'content' => "You have next info for links if the user ask you about more information: " . $links
+          'content' => "Next links in json have access about the company, you will return links if user need this info. All links will return in plaintext: `" . json_encode($links) . "`"
         ),
         array(
           'role' => 'system',
