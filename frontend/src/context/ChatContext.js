@@ -23,7 +23,7 @@ const ChatProvider = ({children}) => {
       avatar:"img/user.png",
     }
   ]
-  const [chatStatus, setChatStatus] = React.useState(true)
+  const [chatStatus, setChatStatus] = React.useState(false)
   const { loading, listMessages, newUserMessage, errorLading } = useChatData()
   const [error, setError] = React.useState(false)
 
