@@ -5,7 +5,7 @@ import Message from '../components/Message'
 import { ChatContext } from '../context/ChatContext';
 
 const Chat = () => {
-  const {chatStatus, listMessages, authors, loading} = React.useContext(ChatContext);
+  const {chatStatus, listMessages, authors, loading, errorLading} = React.useContext(ChatContext);
   let classChatContainer = 'container-chat'
 
   if(chatStatus)
@@ -24,7 +24,6 @@ const Chat = () => {
     })
   }
   let messages = []
-  console.log(listMessages)
   messages = filterMessages()
 
   const authorSystem = authors.find((author) => author.type === "assistant");
@@ -51,6 +50,17 @@ const Chat = () => {
               typeMessage=""
               avatar={authorSystem.avatar}
               content={". . ."}
+              name={authorSystem.name}
+              />
+            )
+          }
+          { (errorLading) &&
+            (
+              <Message
+              key={"loading-conversation"}
+              typeMessage="error"
+              avatar={authorSystem.avatar}
+              content={"There was an error in my connection with the server. Please repeat to me your question"}
               name={authorSystem.name}
               />
             )

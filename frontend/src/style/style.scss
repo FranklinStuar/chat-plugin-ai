@@ -14,6 +14,8 @@ $color-accent : #FFAB37;
 $color-dark-light: #f4f4f4;
 $color-green-dark: #68C453;
 $color-green-light: #EFFBEC;
+$color-error: #F2DEDE;
+$color-error-border: #FFC9CF;
 
 .chat-pg{
   color: $color-primary;
@@ -171,5 +173,12 @@ $color-green-light: #EFFBEC;
   .content-conversation{
     background-color: $color-green-light;
     border-color: $color-green-dark;
+  }
+}
+
+.conversation-chat.error{
+  .content-conversation{
+    background-color: $color-error;
+    border-color: $color-error-border;
   }
 }

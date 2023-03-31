@@ -51,6 +51,7 @@ function chataifp__settings_page() {
                 <th>Name Page</th>
                 <th>URL</th>
                 <th>Description</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -66,6 +67,7 @@ function chataifp__settings_page() {
                     </td>
                     <td><input type="text" name="chataifp__links_description[]"
                         value="<?php echo esc_attr( $link['description'] ); ?>"></td>
+                  <td><button type="button" class="remove-link button">Remove Link</button></td>
                   </tr>
               <?php
                   endforeach;
@@ -75,7 +77,6 @@ function chataifp__settings_page() {
                   <td><input type="text" name="chataifp__links_name[]"></td>
                   <td><input type="text" name="chataifp__links_url[]"></td>
                   <td><input type="text" name="chataifp__links_description[]"></td>
-                  <td><button type="button" class="remove-link button">Remove Link</button></td>
                 </tr>
               <?php
                 endif

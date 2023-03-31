@@ -1,29 +1,6 @@
 import React, {useEffect,useState} from 'react'
 import axios from 'axios';
 
-const sendData = async (status="init",messages=[]) => {
-  try {
-    const response = await axios.post("/wp-json/chatai-fp/v1/conversation", {
-      data: {
-        'status-chat': status,
-        messages
-      }},
-    {
-      headers: {
-        'Content-Type': 'application/json'
-    }});
-    if(response.data.success && response.data.success === false)
-      console.error(response.data.message);
-    else{
-      console.log("response.data",response.data)
-      return await response.data
-    }
-  } catch (error) {
-    console.error(error);
-  }
-  return []
-}
-
 const goToLastMessage = () =>{
   const element = document.querySelector(".body-chat");
   const lastItem = document.querySelector(".body-chat .conversation-chat:last-child");
@@ -31,7 +8,7 @@ const goToLastMessage = () =>{
 }
 
 const useChatData = () => {
-  const [errorLading, setErrorLoading] = useState(true)
+  const [errorLading, setErrorLoading] = useState(false)
   const [loading, setLoading] = useState(true)
   const [listMessages, setListMessages] = useState([])
   
@@ -51,17 +28,16 @@ const useChatData = () => {
               'Content-Type': 'application/json'
           }});
           if(response.data.success && response.data.success === false){
-            console.error(response.data.message);
             setListMessages([])
           }
           else{
-            console.log("response.data",response.data)
             const responseList = await response.data
             setListMessages(responseList)
           }
         } catch (error) {
           setListMessages([])
           setErrorLoading(error)
+          console.log(error)
         }
         setLoading(false)
       }
@@ -75,33 +51,31 @@ const useChatData = () => {
 
   useEffect(() => {
     goToLastMessage()
+    setErrorLoading(false)
     let ignore = false
     if(!ignore){
       if(listMessages.length && listMessages[listMessages.length -1].role === "user"){
-        console.log("ingresa")
+        const filteredMessages = listMessages.filter(message => message.role !== 'error')
         const sendMessage = async () => {
           setLoading(true)
           try {
             const response = await axios.post("/wp-json/chatai-fp/v1/conversation", {
               data: {
                 'status-chat': "continue",
-                messages:listMessages
+                messages:filteredMessages
               }},
             {
               headers: {
                 'Content-Type': 'application/json'
             }});
             if(!response.data.success && !response.success){
-              console.log("response.data",response.data)
               const responseList = await response.data
               setListMessages(responseList)
-            }else{
-              console.log("error",response)
-
             }
           } catch (error) {
-            setErrorLoading(error)
+            setErrorLoading(true)
           }
+          goToLastMessage()
           setLoading(false)
         }
         sendMessage()

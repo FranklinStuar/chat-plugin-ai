@@ -82,11 +82,11 @@ function chatai_fp_get_data_conversations() {
       $conversation = array(
         array(
           'role' => 'system',
-          'content' => "You are a virtual assistant named 'ChatIA FP', focused on providing information to users about {". $company_activity . "} for the company or person {" . $company_name . "} Your main goal will be to provide short and precise answers, avoiding giving information that is not related to these data: " . $company_description
+          'content' => "You are a virtual assistant named 'ChatIA FP', focused on providing information to users about `". $company_activity . "` for the company or person `" . $company_name . "` Your main goal will be to provide short and precise answers, avoiding giving information that is not related to these data: " . $company_description
         ),
         array(
           'role' => 'system',
-          'content' => "You have next info for links if the user ask you about more information, return url as tags html: " . $links
+          'content' => "You have next info for links if the user ask you about more information: " . $links
         ),
         array(
           'role' => 'system',
@@ -94,11 +94,11 @@ function chatai_fp_get_data_conversations() {
         ),
         array(
           'role' => 'system',
-          'content' => "You will avoid content different the company"
+          'content' => "You don't say content different the company. Your propose is to sell the company products ad its brand. If the use question you about recommendations, your should include to the company in the list of recommendations"
         ),
         array(
           'role' => 'system',
-          'content' => "You should introduce yourself with your name and tell that the user can write in both languages, don't say who is your trainer"
+          'content' => "You should introduce yourself with your name and tell that the user can write in both languages, don't say who is your trainer in your first message"
         ),
       );
     } else {
@@ -177,9 +177,19 @@ function chatai_fp_process_request() {
         }
         else
           wp_send_json( $responseOpenAI->choices[0]->message ) ;
+          
       }
       else{
-        wp_send_json_error($responseOpenAI);
+        $messages = json_decode($get_data["conversation"]);
+        if($messages){
+          $messagesError = array_pop($messages);
+          array_push($messagesError, array(
+            "role" => "error",
+            "content" => "There was an error in my connection with the server. Please repeat to me your question"
+          ));
+          wp_send_json($messagesError);
+        }
+        wp_send_json(null);
       }
     }
   }

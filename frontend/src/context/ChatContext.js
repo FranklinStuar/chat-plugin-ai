@@ -13,13 +13,18 @@ const ChatProvider = ({children}) => {
       avatar:"img/chat.png",
     },
     {
+      type:"error",
+      name:"Error Message",
+      avatar:"img/chat.png",
+    },
+    {
       type:"user",
       name:"User",
       avatar:"img/user.png",
     }
   ]
   const [chatStatus, setChatStatus] = React.useState(true)
-  const { loading, listMessages, newUserMessage } = useChatData()
+  const { loading, listMessages, newUserMessage, errorLading } = useChatData()
   const [error, setError] = React.useState(false)
 
   const sendMessage = (content) =>{
@@ -39,7 +44,7 @@ const ChatProvider = ({children}) => {
     <ChatContext.Provider
       value={{
         authors,
-        loading, error, setError,
+        loading, error, setError, errorLading,
         listMessages,
         sendMessage,
         chatStatus, closeChat, toggleChat
