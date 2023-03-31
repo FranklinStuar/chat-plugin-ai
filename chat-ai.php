@@ -11,6 +11,9 @@ License URI: https://creativecommons.org/licenses/by-nc-nd/4.0/
 */
 
 
+// code for admin panel
 include( plugin_dir_path( __FILE__ ) . 'admin.php' );
+
+//code for frontend when You can connect the chatbot php with the react.js project
 include( plugin_dir_path( __FILE__ ) . 'frontend.php' );
 

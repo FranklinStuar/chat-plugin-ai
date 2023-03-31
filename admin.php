@@ -55,30 +55,31 @@ function chataifp__settings_page() {
             </thead>
             <tbody>
               <?php
-                                $links = get_option( 'chataifp__links', array() );
-                                if ( ! empty( $links ) ) {
-                                    foreach ( $links as $link ) {
-                                        ?>
-              <tr>
-                <td><input type="text" name="chataifp__links_name[]" value="<?php echo esc_attr( $link['name'] ); ?>">
-                </td>
-                <td><input type="text" name="chataifp__links_url[]" value="<?php echo esc_attr( $link['url'] ); ?>">
-                </td>
-                <td><input type="text" name="chataifp__links_description[]"
-                    value="<?php echo esc_attr( $link['description'] ); ?>"></td>
-              </tr>
+                $links = get_option( 'chataifp__links', array() );
+                if ( ! empty( $links ) ):
+                  foreach ( $links as $link ):
+              ?>
+                  <tr>
+                    <td><input type="text" name="chataifp__links_name[]" value="<?php echo esc_attr( $link['name'] ); ?>">
+                    </td>
+                    <td><input type="text" name="chataifp__links_url[]" value="<?php echo esc_attr( $link['url'] ); ?>">
+                    </td>
+                    <td><input type="text" name="chataifp__links_description[]"
+                        value="<?php echo esc_attr( $link['description'] ); ?>"></td>
+                  </tr>
               <?php
-                                    }
-                                } else {
-                                    ?>
-              <tr>
-                <td><input type="text" name="chataifp__links_name[]"></td>
-                <td><input type="text" name="chataifp__links_url[]"></td>
-                <td><input type="text" name="chataifp__links_description[]"></td>
-              </tr>
+                  endforeach;
+                else:
+              ?>
+                <tr>
+                  <td><input type="text" name="chataifp__links_name[]"></td>
+                  <td><input type="text" name="chataifp__links_url[]"></td>
+                  <td><input type="text" name="chataifp__links_description[]"></td>
+                  <td><button type="button" class="remove-link button">Remove Link</button></td>
+                </tr>
               <?php
-                                }
-                                ?>
+                endif
+              ?>
             </tbody>
           </table>
           <button type="button" class="add-link button">Add Link</button>
@@ -89,6 +90,9 @@ function chataifp__settings_page() {
   </form>
 </div>
 <script>
+  /**
+   * Add and remove links used. Those are used as reference to pages with more information
+   */
   jQuery(document).ready(function ($) {
     $('.add-link').click(function () {
       var linkRow =
@@ -120,6 +124,7 @@ function chataifp__settings_page() {
       if ( isset( $_POST['chataifp__company_description'] ) ) {
           update_option( 'chataifp__company_description', sanitize_text_field( $_POST['chataifp__company_description'] ) );
       }
+      // save links as just only one data in the database
       if ( !empty( $_POST['chataifp__links_name'] ) ) {
         $link_names = $_POST['chataifp__links_name'];
           $link_urls = $_POST['chataifp__links_url'];

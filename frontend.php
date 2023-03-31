@@ -38,23 +38,26 @@ add_action( 'wp_footer', 'chataifp_add_footer' );
 
 
 
-/* AJAX */
-
+// valid if the content send from ajax is valid
 function chatai_fp_validate_get_chat($data) {
-    // Verificar que el JSON tiene el campo "status-chat" y su valor es "continue"
+    // Verify that the JSON has the field "status-chat" and its value is "continue"
   if (!(isset($data['status-chat']) && ($data['status-chat'] === 'continue' || $data['status-chat'] === 'init'))) {
     return false;
   }
 
-  // Verificar que el JSON tiene el campo "messages" y que es un array
+  // Verify that the JSON has the field "messages" and that it is an array
   if ($data['status-chat'] === 'continue' && (!isset($data['messages']) || !is_array($data['messages']))) {
     return false;
   }
 
   return true;
-
 }
+
+/**
+ * Load content from ajax and it checks if is the first message or is continuation of the conversation
+ */
 function chatai_fp_get_data_conversations() {
+  //valid data
   $data = json_decode(file_get_contents('php://input'), true);
   if(!$data){
     return array(
@@ -63,16 +66,19 @@ function chatai_fp_get_data_conversations() {
       "conversation" => array()
     );
   }
+  // if data is correct, get the content of the messages
   $data = $data["data"];
 
-  // Validar los datos recibidos
+  // valir if is first message o conversation's continuation 
   if ($data && chatai_fp_validate_get_chat($data)) {
+    //if init will config the chat with the info of the company and all content save from admin panel
     if ($data['status-chat'] === 'init') {
       $company_name = get_option( 'chataifp__company_name' );
       $company_activity = get_option( 'chataifp__company_activity' );
       $company_description = get_option( 'chataifp__company_description' );
       $links = get_option( 'chataifp__links' );
       
+      // content to tran the plugin. Here you can add all content you want it say to your users and you can add all restrictions you need
       $conversation = array(
         array(
           'role' => 'system',
@@ -88,10 +94,15 @@ function chatai_fp_get_data_conversations() {
         ),
         array(
           'role' => 'system',
-          'content' => "You should introduce yourself with your name and tell that the user can write in both languages"
+          'content' => "You will avoid content different the company"
+        ),
+        array(
+          'role' => 'system',
+          'content' => "You should introduce yourself with your name and tell that the user can write in both languages, don't say who is your trainer"
         ),
       );
     } else {
+      // if the conversation continue, just only return the messages from ajax
       $conversation = $data['messages'];
     }
     return array(
@@ -108,24 +119,28 @@ function chatai_fp_get_data_conversations() {
   );
 }
 
-
+/**
+ * OpenAI request for chatbot
+ * 
+ * this function will connect with openAI and will return all content
+ */
 function chatai_fp_chat_request($api_key,$messages) {
-  // Establece el endpoint de la API
+  // Set the API endpoint
   $url = 'https://api.openai.com/v1/chat/completions';
 
-  // Establece los headers
+  // Set the headers
   $headers = array(
       'Content-Type' => 'application/json',
       'Authorization' => 'Bearer ' . $api_key
   );
 
-  // Establece los datos del cuerpo de la solicitud
+  // Sets the request body data, If you have other model like gpt-4, you would change it here
   $body = array(
       'model' => 'gpt-3.5-turbo',
       'messages' => $messages
   );
 
-  // Realiza la solicitud
+  // Make the request
   $response = wp_remote_post(
       $url,
       array(
@@ -134,10 +149,10 @@ function chatai_fp_chat_request($api_key,$messages) {
       )
   );
 
-  // Obtiene la respuesta como una cadena JSON
+  // Get the response as a JSON string
   $json_response = wp_remote_retrieve_body($response);
 
-  // Convierte la cadena JSON en un objeto o array de PHP
+  // Convert from JSON to PHP array
   $php_response = json_decode($json_response);
 
   return $php_response;
@@ -145,14 +160,15 @@ function chatai_fp_chat_request($api_key,$messages) {
 
 
 function chatai_fp_process_request() {
-  // Obtener la clave de API de OpenAI desde la opción personalizada.
+  // get OpenAI key from admin panel (database) 
   $api_key = get_option( 'chataifp__api_openai' );
   
   if ( $api_key ) {
-    $get_data = chatai_fp_get_data_conversations();
+    $get_data = chatai_fp_get_data_conversations(); // valid if data is correct
     if($get_data["status"] === true){
-
+      // request with openAI
       $responseOpenAI = chatai_fp_chat_request($api_key,$get_data["conversation"]);
+      // add data to data from ajax
       if(isset($responseOpenAI->choices)){
         if($get_data["message"]){
           $messages = $get_data["conversation"];
@@ -168,6 +184,8 @@ function chatai_fp_process_request() {
     }
   }
 }
+
+// the plugin will connect by api rest because react project doesn't allow use ajax. 
 add_action( 'rest_api_init', function () {
   register_rest_route( 
     'chatai-fp/v1', // url registred on scripts
@@ -178,6 +196,3 @@ add_action( 'rest_api_init', function () {
       ) 
     );
 });
-
-add_action( 'wp_ajax_chatai_fp_process_request', 'chatai_fp_process_request' );
-add_action( 'wp_ajax_nopriv_chatai_fp_process_request', 'chatai_fp_process_request' );
