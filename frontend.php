@@ -71,6 +71,10 @@ function chatai_fp_get_data_conversations() {
 
   // valir if is first message o conversation's continuation 
   if ($data && chatai_fp_validate_get_chat($data)) {
+
+    // if the conversation continue, just only return the messages from ajax
+    $conversation = $data['messages'];
+
     //if init will config the chat with the info of the company and all content save from admin panel
     if ($data['status-chat'] === 'init') {
       $company_name = get_option( 'chataifp__company_name' );
@@ -101,10 +105,7 @@ function chatai_fp_get_data_conversations() {
           'content' => "You should introduce yourself with your name and tell that the user can write in both languages, don't say who is your trainer in your first message"
         ),
       );
-    } else {
-      // if the conversation continue, just only return the messages from ajax
-      $conversation = $data['messages'];
-    }
+    } 
     return array(
       "status" => true,
       "message" => $data['status-chat'],
@@ -125,58 +126,59 @@ function chatai_fp_get_data_conversations() {
  * this function will connect with openAI and will return all content
  */
 function chatai_fp_chat_request($api_key,$messages) {
-  // Set the API endpoint
-  $url = 'https://api.openai.com/v1/chat/completions';
+    $url = 'https://api.openai.com/v1/chat/completions';
+    $data = array(
+        'model' => 'gpt-3.5-turbo',
+        'messages' => $messages
+    );
+    $options = array(
+        'http' => array(
+            'header'  => "Content-Type: application/json\r\n" .
+                        "Authorization: Bearer " . $api_key . "\r\n",
+            'method'  => 'POST',
+            'content' => json_encode($data),
+        ),
+    );
 
-  // Set the headers
-  $headers = array(
-      'Content-Type' => 'application/json',
-      'Authorization' => 'Bearer ' . $api_key
-  );
+    $context  = stream_context_create($options);
+    $response = file_get_contents($url, false, $context);
+    $result = json_decode($response, true);
 
-  // Sets the request body data, If you have other model like gpt-4, you would change it here
-  $body = array(
-      'model' => 'gpt-3.5-turbo',
-      'messages' => $messages
-  );
+    // imprime el resultado obtenido de la API
+    return $result;
 
-  // Make the request
-  $response = wp_remote_post(
-      $url,
-      array(
-          'headers' => $headers,
-          'body' => json_encode($body)
-      )
-  );
-
-  // Get the response as a JSON string
-  $json_response = wp_remote_retrieve_body($response);
-
-  // Convert from JSON to PHP array
-  $php_response = json_decode($json_response);
-
-  return $php_response;
 }
 
 
-function chatai_fp_process_request() {
+
+function chatai_fp_process_request($intent = 0) {
   // get OpenAI key from admin panel (database) 
   $api_key = get_option( 'chataifp__api_openai' );
   
   if ( $api_key ) {
     $get_data = chatai_fp_get_data_conversations(); // valid if data is correct
+
     if($get_data["status"] === true){
       // request with openAI
       $responseOpenAI = chatai_fp_chat_request($api_key,$get_data["conversation"]);
+      if(!$responseOpenAI && $intent < 3)
+        chatai_fp_process_request($intent+1);
+      elseif(!$responseOpenAI && $intent >= 3)
+        wp_send_json_error( $get_data, 500 );
+
       // add data to data from ajax
-      if(isset($responseOpenAI->choices)){
+      if(isset($responseOpenAI["choices"])){
         if($get_data["message"]){
           $messages = $get_data["conversation"];
-          $messages[] = $responseOpenAI->choices[0]->message;
+          $response_message = $responseOpenAI["choices"][0]["message"];
+          // echo $response_message;
+          $response_message["content"] = preg_replace('/\b((https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/i', '<a href="$1" target="_blank">$1</a>', $response_message["content"]);
+
+          $messages[] = $response_message;
           wp_send_json($messages);
         }
         else
-          wp_send_json( $responseOpenAI->choices[0]->message ) ;
+          wp_send_json( $responseOpenAI["choices"][0]["message"] ) ;
           
       }
       else{
@@ -185,11 +187,11 @@ function chatai_fp_process_request() {
           $messagesError = array_pop($messages);
           array_push($messagesError, array(
             "role" => "error",
-            "content" => "There was an error in my connection with the server. Please repeat to me your question"
+            "content" => "There was an error in my connection with the server. Please repeat me your question"
           ));
           wp_send_json($messagesError);
         }
-        wp_send_json(null);
+        wp_send_json(["status"=>'error_desconocido', 'responseOpenAI'=>$responseOpenAI]);
       }
     }
   }
