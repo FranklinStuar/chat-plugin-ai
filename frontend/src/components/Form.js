@@ -1,18 +1,30 @@
-import React, {useRef} from 'react'
+import React, {useRef,useEffect,useContext} from 'react'
 import { ChatContext } from '../context/ChatContext';
+import autosize from 'autosize';
+
+
 
 const Form = () => {
-  const {sendMessage} = React.useContext(ChatContext);
+  const {sendMessage} = useContext(ChatContext);
+  
 	const inputMessage = useRef("")
   const handleSendMessage = (e) => {
-    e.preventDefault();
-    let message = inputMessage.current.value;
-    message = message.trim()
-    if(message){
-      sendMessage(message)
-      inputMessage.current.value=""
+    if (e.key === 'Enter' && !(e.shiftKey && e.key === 'Enter')) {
+      e.preventDefault();
+      let message = inputMessage.current.value;
+      message = message.trim()
+      if(message){
+        sendMessage(message)
+        inputMessage.current.value=""
+      }
     }
   }
+
+  useEffect(() => {
+    if (inputMessage.current) {
+      autosize(inputMessage.current);
+    }
+  }, []);
 
   return (
     <div className='form-chat'>
@@ -20,7 +32,7 @@ const Form = () => {
         name="text-chat" 
         id="text-chat" 
         placeholder='Type a message'
-        onKeyDown={(e)=> e.key === 'Enter' && handleSendMessage(e)}
+        onKeyDown={handleSendMessage}
         ref={inputMessage}
       ></textarea>
     </div>
