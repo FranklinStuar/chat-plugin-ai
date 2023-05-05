@@ -1,11 +1,7 @@
 import React from 'react';
 
 const Message = ({typeMessage="", avatar, content, name}) => {
-  function urlToLink() {
-    let urlRegex = /(https?:\/\/[^\s]+)[^\s.,;)]/g;
-
-    return content.replace(urlRegex, '<a target="_blank" href="$1">$1</a>');
-  }
+  
   
   return (
     <div className={"conversation-chat "+typeMessage}>
@@ -16,7 +12,7 @@ const Message = ({typeMessage="", avatar, content, name}) => {
       </div>
       <div className="content-conversation"
       dangerouslySetInnerHTML={{
-        __html: urlToLink(),
+        __html: content,
       }}
       ></div>
     </div>
